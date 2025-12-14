@@ -1,6 +1,6 @@
 services:
   zulip_telegram_bot:
-    build: .
-    restart: always
+    env_file:
+      - .env.prod
     environment:
       - PYTHONUNBUFFERED=1

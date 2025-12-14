@@ -9,7 +9,8 @@ from urllib.parse import quote
 import re
 from datetime import datetime, time
 
-load_dotenv()
+# загружает локальные переменные окружения, если код запускается без докера (не перезаписывает значения прокинутые в контейнер через docker-compose)
+load_dotenv(".env.local")
 
 ZULIP_IGNORE_OWN_MESSAGES = os.getenv("ZULIP_IGNORE_OWN_MESSAGES", "true").lower() in ("1", "true", "yes")
 ZULIP_EMAIL = os.getenv("ZULIP_EMAIL")
@@ -396,8 +397,17 @@ async def main():
         await bot.set_my_commands([
             types.BotCommand(command="params", description="Показать текущие параметры")
         ])
+
+        # Получаем информацию о боте
+        me = await bot.get_me()
+        bot_username = me.username
+
+        # Выводим ссылку на бота в консоль
+        print(f"Бот запущен! Ссылка на него: https://t.me/{bot_username}")
+
         # запускаем Telegram polling параллельно
         polling_task = asyncio.create_task(dp.start_polling(bot))
+
 
         while True:
             try:
